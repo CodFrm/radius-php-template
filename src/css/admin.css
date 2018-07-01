@@ -137,6 +137,8 @@ body {
 .card-content {
     background: #fff;
     border-radius: 4px;
+    width: 100%;
+    height: 100%;
 }
 
 .card .card-header {
@@ -144,6 +146,7 @@ body {
     line-height: 25px;
     padding: 4px 8px;
     color: #867a7a;
+    border-bottom: 1px solid #eee;
 }
 
 .card .card-text {

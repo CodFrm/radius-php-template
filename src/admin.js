@@ -1,4 +1,5 @@
 require('./css/admin.css');
+require('./table');
 
 $(function () {
     $('.nav-left>.nav-item>.nav-ic').click(function () {
@@ -8,3 +9,4 @@ $(function () {
         $('.nav-left').slideToggle().end();
     });
 })
+

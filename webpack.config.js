@@ -15,12 +15,28 @@ module.exports = {
             use: ["style-loader", "css-loader"]
         }]
     },
+    resolve: {
+        alias: {
+            vue: 'vue/dist/vue.common.js'
+        }
+    },
     plugins: [
         new htmlWebpackPlugin({
             filename: __dirname + '/dist/admin.html',
             template: __dirname + '/src/admin.html',
             inject: 'body',
-            title: '导入页面',
+            title: '主页面',
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true
+            },
+            chunks: ['admin']
+        }),
+        new htmlWebpackPlugin({
+            filename: __dirname + '/dist/user.html',
+            template: __dirname + '/src/user.html',
+            inject: 'body',
+            title: '用户管理',
             minify: {
                 removeComments: true,
                 collapseWhitespace: true
