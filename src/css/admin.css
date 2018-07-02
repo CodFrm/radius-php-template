@@ -142,8 +142,8 @@ body {
 }
 
 .card .card-header {
-    height: 25px;
-    line-height: 25px;
+    height: 30px;
+    line-height: 22px;
     padding: 4px 8px;
     color: #867a7a;
     border-bottom: 1px solid #eee;
@@ -163,6 +163,11 @@ body {
 
 .nav-item.active>.sub-nav {
     display: block;
+}
+
+#user-table{
+    position: relative;
+    padding: 8px;
 }
 
 @media screen and (max-width: 720px) {

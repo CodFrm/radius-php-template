@@ -1,9 +1,11 @@
 var htmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
     entry: {
         admin: __dirname + '/src/admin.js',
+        user: __dirname + '/src/user.js',
     },
     output: {
         path: __dirname + '/dist/js',
@@ -11,9 +13,29 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /\.css$/,
-            use: ["style-loader", "css-loader"]
-        }]
+                test: /\.css$/,
+                use: ["style-loader", "css-loader"]
+            },
+            {
+                test: /\.vue$/,
+                use: [{
+                    loader: 'vue-loader',
+                    options: {
+                        extractCSS: true
+                    }
+                }]
+            }, {
+                test: /\.(eot|woff|woff2|ttf|svg)(\?\S*)?$/,
+                use: [{
+                    loader: 'url-loader',
+                    options: {
+                        limit: 5000,
+                        name: 'font/[name]-[hash:8].[ext]'
+                    }
+                }]
+
+            }
+        ]
     },
     resolve: {
         alias: {
@@ -30,7 +52,7 @@ module.exports = {
                 removeComments: true,
                 collapseWhitespace: true
             },
-            chunks: ['admin']
+            chunks: ['admin', 'vendors', 'manifest']
         }),
         new htmlWebpackPlugin({
             filename: __dirname + '/dist/user.html',
@@ -41,7 +63,9 @@ module.exports = {
                 removeComments: true,
                 collapseWhitespace: true
             },
-            chunks: ['admin']
-        })
+            chunksSortMode: 'dependency',
+            chunks: ['user', 'vendors', 'manifest']
+        }),
+        new VueLoaderPlugin()
     ]
 }
