@@ -1,4 +1,3 @@
-require('./css/admin.css');
 const Vue = require('vue');
 // import css
 import 'vue-easytable/libs/themes-base/index.css'

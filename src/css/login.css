@@ -1,0 +1,84 @@
+body {
+    margin: 0;
+    background: #343842;
+}
+
+.logo {
+    color: #fff;
+    font-size: 20px;
+    margin: 4px;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.middle-login {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.top-title {
+    text-align: center;
+    display: block;
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+.form-post {
+    width: 300px;
+    padding: 20px 20px 8px 20px;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.form-post label {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.form-post label,
+.form-post .input {
+    width: 100%;
+}
+
+.input {
+    outline: none;
+    padding: 2px 4px;
+    height: 40px;
+    line-height: 32px;
+    border: 1px solid #d0d0d0;
+    box-shadow: 0px 0px 2px #d0d0d0;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.input:focus {
+    box-shadow: 0px 0px 2px #00b5ff;
+}
+
+.input-group:not(:first-of-type) {
+    margin-top: 16px;
+}
+
+.btn-submit {
+    border: 0;
+    width: 100%;
+    font-size: 18px;
+    color: #fff;
+    background: #00b6ff;
+    opacity: .8;
+    cursor: pointer;
+}
+
+.btn-submit:hover{
+    opacity: 1;
+}
+
+
+.link{
+    text-decoration: none;
+    color: #00b5ff;
+    font-size: 12px;
+}
