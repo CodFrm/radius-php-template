@@ -165,7 +165,7 @@ body {
     display: block;
 }
 
-#user-table{
+#user-table {
     position: relative;
     padding: 8px;
 }
@@ -202,4 +202,26 @@ body {
         left: 0;
         right: 0;
     }
+}
+
+.pop-wid {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border: 1px solid #cecece;
+    border-radius: 4px;
+    transition: .4s;
+    opacity: 0;
+    display: block;
+    z-index: -1;
+}
+
+.pop-wid.prompt {
+    height: 30px;
+    min-width: 150px;
+    line-height: 30px;
+    text-align: center;
+    cursor: default;
 }

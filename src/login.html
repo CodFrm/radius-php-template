@@ -6,9 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>PHPRadius</title>
-    <link rel="stylesheet" href="http://at.alicdn.com/t/font_722334_j10bg4p5wdk.css">
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_722334_eytpkh8il2.css">
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-
 </head>
 
 <body>
@@ -23,7 +22,7 @@
                 <input class="input" id="passwd" type="password" name="username" placeholder="请输入你的密码">
             </div>
             <div class="input-group">
-                <button class="btn-submit input">登录</button>
+                <button id="login" class="btn-submit input">登录</button>
             </div>
             <div class="input-group">
                 <button class="btn-submit input" style="background: #545654;">注册</button>
@@ -35,6 +34,13 @@
         </div>
     </div>
 </body>
-
+<script>
+    $(function(){
+        $('#login').click(function(){
+            var pop=new popWind();
+            pop.prompt('登录失败','prompt','red');
+        });
+    })
+</script>
 
 </html>
