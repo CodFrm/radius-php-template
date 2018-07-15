@@ -27,18 +27,21 @@
             <div class="input-group">
                 <button class="btn-submit input" style="background: #545654;">注册</button>
             </div>
-            <div class="input-group" style="text-align: right;margin: 4px;"> 
+            <div class="input-group" style="text-align: right;margin: 4px;">
                 <a href="#" class="link">忘记密码?</a>
             </div>
 
         </div>
     </div>
+    <div class="pop-wid prompt" style="color:red;opacity: 1;z-index: 10;">
+        <i class="iconfont icon-prompt"></i><span style="margin-left:6px;">233333333333333333333333</span>
+    </div>
 </body>
 <script>
-    $(function(){
-        $('#login').click(function(){
-            var pop=new popWind();
-            pop.prompt('登录失败','prompt','red');
+    $(function() {
+        $('#login').click(function() {
+            var pop = new popWind();
+            pop.prompt('登录失败', 'prompt', 'red');
         });
     })
 </script>

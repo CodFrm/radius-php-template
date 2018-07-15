@@ -85,7 +85,7 @@ body {
     display: inline-block;
 }
 
-.nav-ic.active {
+.active>.nav-ic {
     background: #ff7267;
 }
 
@@ -109,11 +109,12 @@ body {
     background: #545965;
 }
 
-.nav-left .nav-item>.nav-ic.active:hover {
+.nav-left .nav-item.active>.nav-ic:hover {
     background: #ff7267;
 }
 
-.nav-item .icon-down {
+.nav-item .icon-down,
+.nav-item .icon-up {
     margin-right: 18px;
     float: right;
 }
@@ -205,6 +206,7 @@ body {
 }
 
 .pop-wid {
+    padding: 2px 8px;
     position: absolute;
     left: 50%;
     top: 50%;
