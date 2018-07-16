@@ -1,26 +1,13 @@
 import Vue from 'vue'
 import router from './router'
-// // import css
-// import 'vue-easytable/libs/themes-base/index.css'
-
-// // import table and pagination comp
-// import {
-//     VTable,
-//     VPagination
-// } from 'vue-easytable'
-
-// // Register to global
-// Vue.component(VTable.name, VTable)
-// Vue.component(VPagination.name, VPagination)
-
+import 'vue-easytable/libs/themes-base/index.css'
+import {
+    VTable,
+    VPagination
+} from 'vue-easytable'
+Vue.component(VTable.name, VTable)
+Vue.component(VPagination.name, VPagination)
 require('./../css/admin.css');
-
-// const route = new VueRouter({
-//     routes
-// })
-// Vue.prototype.$goRoute = function(index) {
-//     this.$router.push(index)
-// }
 
 new Vue({
     router
@@ -30,10 +17,10 @@ $(function() {
     $('.nav-left>.nav-item>.nav-ic').click(function() {
         //改变箭头指向
         console.log($(this).parent().children('.sub-nav').css('display'));
-        if($(this).parent().children('.sub-nav').css('display')=='block'){
+        if ($(this).parent().children('.sub-nav').css('display') == 'block') {
             $(this).children('.arrow').removeClass('icon-down');
             $(this).children('.arrow').addClass('icon-up');
-        }else{
+        } else {
             $(this).children('.arrow').addClass('icon-down');
             $(this).children('.arrow').removeClass('icon-up');
         }
