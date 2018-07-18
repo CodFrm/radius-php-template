@@ -168,7 +168,11 @@ body {
 
 #user-table {
     position: relative;
-    padding: 8px;
+    padding: 8px 0;
+}
+
+#pop-wind {
+    width: 500px;
 }
 
 @media screen and (max-width: 720px) {
@@ -203,6 +207,9 @@ body {
         left: 0;
         right: 0;
     }
+    #pop-wind {
+        width: 300px;
+    }
 }
 
 .pop-wid {
@@ -226,4 +233,124 @@ body {
     line-height: 30px;
     text-align: center;
     cursor: default;
+}
+
+.tools-bar {
+    text-align: right;
+}
+
+.pop-box {
+    transition: opacity .5s;
+    opacity: 0;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+    box-shadow: 0px 0px 4px #484848;
+    z-index: 100;
+}
+
+.pop-box>div {
+    padding: 6px;
+}
+
+.pop-box>.box-header,
+.box-footer {
+    line-height: 30px;
+    padding: 10px 6px;
+    background: #f3f3f3;
+    font-size: 15px;
+    font-weight: 400;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.pop-box>.box-header {
+    border-bottom: 1px solid #eee;
+}
+
+.pop-box>.box-footer {
+    border-top: 1px solid #eee;
+}
+
+#pop {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+    background: #8e8e8eab;
+}
+
+.btn.pop-close {
+    background: #00000000;
+    float: right;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 100;
+    font-size: 14px;
+}
+
+.btn.pop-close:hover {
+    color: #ff0000;
+}
+
+.spk-box.box {
+    padding: 10px;
+    border: 1px solid #eaeaea;
+    border-left: 4px solid #eaeaea;
+}
+
+.pop-box .spk-box {
+    font-size: 14px;
+}
+
+.btn {
+    border-radius: 2px;
+    display: inline-block;
+    min-width: 60px;
+    font-size: 12px;
+    border: 0;
+    padding: 5px;
+    cursor: pointer;
+    outline: none;
+    font-weight: bold;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    text-decoration: none !important;
+}
+
+.btn.btn-min {
+    min-width: auto;
+}
+
+.box-content {
+    overflow: hidden;
+    padding: 8px !important;
+    background: #fff;
+}
+
+.box-content .ipt-group {
+    width: 400px;
+}
+
+.box-content>p {
+    font-size: 14px;
+}
+
+.ipt-text {
+    width: 100%;
+    padding: 4px 6px;
+    box-sizing: border-box;
+    border: 1px solid #D4D4D4;
+    outline: none;
+}
+
+.ipt-select.ipt-text {
+    width: 25%;
+}
+
+.ipt-text:hover,
+.ipt-text:focus {
+    border: 1px solid #00a5e0;
 }

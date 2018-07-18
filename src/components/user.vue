@@ -6,8 +6,15 @@
                     用户管理
                 </div>
                 <div class="card-text">
+                    <div class="tools-bar">
+                      <button class="btn" style="background: #78c336;color: #fff;" onclick="show_box('pop-wind')" @click="editUser(-1)">添加用户</button>
+                    </div>
                     <div id="user-table">
-                        <v-table is-horizontal-resize style="width:100%" :columns="columns" :table-data="tableData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
+                        <v-table is-horizontal-resize style="width:100%" 
+                        :columns="columns" :table-data="tableData" row-hover-color="#eee" 
+                        @on-custom-comp="customCompFunc"
+                        row-click-color="#edf7ff">
+                        </v-table>
                     </div>
                     <div class="pagination">
                         <v-pagination :total="total" :page-size="20" :page-index="pageIndex" @page-change="pageChange"></v-pagination>
@@ -15,6 +22,54 @@
                 </div>
             </div>
         </div>
+
+        <div id="pop-wind" class="pop-box box">
+    <div class="box-header">
+        用户信息
+        <button class="btn pop-close" onclick="close_box('pop-wind')">X</button>
+    </div>
+    <div class="box-content">
+        <input type="hidden" id="wid" :value="user.uid">
+        <div class="box spk-box">
+            <span>用户基本信息:</span><br>
+            <span>用户名:<input class="ipt-text" id="user" name="name" :value="user.name" placeholder="请输入用户名" /></span><br>
+            <span>密码:<input class="ipt-text" id="pwd" :value="user.pwd" placeholder="请输入密码" /></span><br>
+            <span>邮箱:<input class="ipt-text" id="email" :value="user.email" placeholder="请输入邮箱" /></span><br>
+        </div>
+        <div class="box spk-box">
+            <span>用户组:</span><br>
+            <select id="group" v-for="group in user.group" class="ipt-text ipt-select">
+              <template v-for="userGroup in $parent.group" v-if="userGroup.group_id == group.group_id">
+              <option value="userGroup.group_id" selected>
+                {{ userGroup.name }}
+              </option>
+              </template>
+              <template v-else>
+                <option value="userGroup.group_id">
+                {{ userGroup.name }}
+                </option>
+              </template>
+            </select>
+            <!-- <select id="group" class="ipt-text ipt-select">
+              <option value="">123</option>
+            </select>
+               <select id="group" class="ipt-text ipt-select">
+              <option value="">123</option>
+            </select>
+               <select id="group" class="ipt-text ipt-select">
+              <option value="">123</option>
+            </select> -->
+            <button class="btn btn-min" style="padding: 4px 8px;background:#00a5e0;color:#fff;" >+</button>
+        </div>
+        <div class="box spk-box" style="text-align: right;">
+            <button class="btn" @click="userAction" style="background: #00a5e0;color: #fff;width:60px;">添加</button>
+        </div>
+    </div>
+    <div class="box-footer">
+        <span class="spk">{{ action }}</span>
+        <button class="pop-close btn" onclick="close_box('pop-wind')">关闭</button>
+    </div>
+</div>
     </div>
 </template>
 <style>
@@ -24,10 +79,44 @@
 }
 </style>
 <script>
+import Vue from "vue";
+import config from "./../config";
+import { formatDate, get } from "./../common";
+Vue.component("action-btn-group", {
+  template:
+    '<div><button class="btn" onclick="show_box(\'pop-wind\')" @click="edit" style="background:#00a5e0;color:#fff;">编辑</button> ' +
+    '<button class="btn" style="background:red;color:#fff;">删除</button></div>',
+  props: {
+    rowData: {
+      type: Object
+    },
+    field: {
+      type: String
+    },
+    index: {
+      type: Number
+    }
+  },
+  methods: {
+    edit() {
+      let params = { type: "editUser", uid: this.rowData["uid"] };
+      this.$emit("on-custom-comp", params);
+    }
+  }
+});
+
 export default {
   name: "user",
   data() {
     return {
+      user: {
+        uid: 0,
+        name: "",
+        pwd: "",
+        email: "",
+        group: []
+      },
+      action: "添加用户",
       pageIndex: 1,
       total: 1234,
       tableData: [],
@@ -49,36 +138,88 @@ export default {
           isResize: true
         },
         {
-          field: "group",
-          title: "用户组",
-          width: 100,
-          titleAlign: "center",
-          columnAlign: "left",
-          isResize: true
-        },
-        {
           field: "email",
           title: "邮箱",
           width: 120,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true
+        },
+        {
+          field: "reg_time",
+          title: "注册时间",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          formatter: function(rowData) {
+            return formatDate(rowData["reg_time"]);
+          }
+        },
+        {
+          field: "last_login_time",
+          title: "最后一次登录时间",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          formatter: function(rowData) {
+            return formatDate(rowData["last_login_time"]);
+          }
+        },
+        {
+          field: "action",
+          title: "操作",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          componentName: "action-btn-group"
         }
       ]
     };
   },
   created() {
-    // 组件创建完后获取数据，
-    // 此时 data 已经被 observed 了
     this.fetchData();
   },
   methods: {
     fetchData() {
-      console.log(this.pageIndex);
+      var vue = this;
+      fetch(config.url + config.aapi + "user?page=" + this.pageIndex, {
+        credentials: "include"
+      })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(json) {
+          vue.tableData = json["rows"];
+          vue.total = json["total"];
+        });
     },
     pageChange: function(pageIndex) {
       this.pageIndex = pageIndex;
       this.fetchData();
+    },
+    editUser(uid) {
+      var vue = this;
+      if (uid != -1) {
+        //编辑用户,获取用户群组
+        get(config.url + config.aapi + "usergroup?uid=" + uid)
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(json) {
+            vue.user.group = json["rows"];
+          });
+      }
+    },
+    userAction: function() {
+      console.log(this.$parent.group);
+    },
+    customCompFunc(params) {
+      if (params.type == "editUser") {
+        this.editUser(params.uid);
+      }
     }
   }
 };

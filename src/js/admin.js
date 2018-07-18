@@ -5,12 +5,28 @@ import {
     VTable,
     VPagination
 } from 'vue-easytable'
+import config from "./../config";
 Vue.component(VTable.name, VTable)
 Vue.component(VPagination.name, VPagination)
 require('./../css/admin.css');
 
-new Vue({
-    router
+var vue = new Vue({
+    router,
+    data() {
+        return {
+            group: []
+        };
+    },
+    created() {
+        fetch(config.url + config.aapi + 'usergroup', {
+                credentials: "include"
+            }).then(function(response) {
+                return response.json();
+            })
+            .then(function(json) {
+                vue.group = json["rows"];
+            });
+    },
 }).$mount('#app');
 
 $(function() {
@@ -51,3 +67,16 @@ window.popWind = function popWind() {
     }
     return this;
 }
+
+window.show_box = function(id) {
+    document.getElementById(id).style.opacity = "1";
+    document.getElementById(id).style.height = "auto";
+};
+
+window.close_box = function(id) {
+    document.getElementById(id).style.opacity = "0";
+    setTimeout(function() {
+        document.getElementById(id).style.height = "0px";
+    }, 500);
+};
+
