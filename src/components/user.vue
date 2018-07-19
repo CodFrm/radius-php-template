@@ -29,40 +29,53 @@
         <button class="btn pop-close" onclick="close_box('pop-wind')">X</button>
     </div>
     <div class="box-content">
-        <input type="hidden" id="wid" :value="user.uid">
+        <input type="hidden" id="wid" v-model="user.uid">
         <div class="box spk-box">
             <span>用户基本信息:</span><br>
-            <span>用户名:<input class="ipt-text" id="user" name="name" :value="user.name" placeholder="请输入用户名" /></span><br>
-            <span>密码:<input class="ipt-text" id="pwd" :value="user.pwd" placeholder="请输入密码" /></span><br>
-            <span>邮箱:<input class="ipt-text" id="email" :value="user.email" placeholder="请输入邮箱" /></span><br>
+            <span>用户名:<input class="ipt-text" id="user" name="name" v-model="user.name" placeholder="请输入用户名" /></span><br>
+            <span>密码:<input class="ipt-text" id="pwd" v-model="user.pwd" placeholder="请输入密码" /></span><br>
+            <span>邮箱:<input class="ipt-text" id="email" v-model="user.email" placeholder="请输入邮箱" /></span><br>
         </div>
         <div class="box spk-box">
             <span>用户组:</span><br>
-            <select id="group" v-for="group in user.group" class="ipt-text ipt-select">
-              <template v-for="userGroup in $parent.group" v-if="userGroup.group_id == group.group_id">
-              <option value="userGroup.group_id" selected>
-                {{ userGroup.name }}
-              </option>
+            <template  v-for="(group,index) in user.group" >
+              <div class="group" :key="index">
+              <select class="ipt-text ipt-select group" @change="groupChange($event,index)">
+                <template v-for="(userGroup,s_index) in $parent.group" v-if="userGroup.group_id == group.group_id">
+                <option :value="userGroup.group_id" selected :key="s_index">
+                  {{ userGroup.name }}
+                </option>
+                </template>
+                <template v-else>
+                  <option :value="userGroup.group_id">
+                  {{ userGroup.name }}
+                  </option>
+                </template>
+                <option value="-1">
+                  删除
+                </option>
+              </select>
+              <template v-if="group.expire==-1">
+                <vue-datepicker-local v-show="time=new Date()" v-model="time">
+           
+                </vue-datepicker-local>
+                <input :id="'forever'+index" type="checkbox" @change="expireChange($event,index)" checked />
+                <label :for="'forever'+index">永久</label>
               </template>
               <template v-else>
-                <option value="userGroup.group_id">
-                {{ userGroup.name }}
-                </option>
+                <vue-datepicker-local v-show="time=isExpire(group.expire,index)" v-model="time">
+           
+                </vue-datepicker-local>
+                <input :id="'forever'+index" type="checkbox" @change="expireChange($event,index)" />
+                <label :for="'forever'+index">永久</label>
               </template>
-            </select>
-            <!-- <select id="group" class="ipt-text ipt-select">
-              <option value="">123</option>
-            </select>
-               <select id="group" class="ipt-text ipt-select">
-              <option value="">123</option>
-            </select>
-               <select id="group" class="ipt-text ipt-select">
-              <option value="">123</option>
-            </select> -->
-            <button class="btn btn-min" style="padding: 4px 8px;background:#00a5e0;color:#fff;" >+</button>
+              
+              </div>
+            </template>
+            <button class="btn btn-min" @click="addUserGroup" style="padding: 4px 8px;background:#00a5e0;color:#fff;margin-top:4px;" >+</button>
         </div>
         <div class="box spk-box" style="text-align: right;">
-            <button class="btn" @click="userAction" style="background: #00a5e0;color: #fff;width:60px;">添加</button>
+            <button class="btn" @click="addUser" style="background: #00a5e0;color: #fff;width:60px;">添加</button>
         </div>
     </div>
     <div class="box-footer">
@@ -99,13 +112,22 @@ Vue.component("action-btn-group", {
   },
   methods: {
     edit() {
-      let params = { type: "editUser", uid: this.rowData["uid"] };
+      let params = {
+        type: "editUser",
+        uid: this.rowData["uid"],
+        row: this.rowData
+      };
       this.$emit("on-custom-comp", params);
     }
   }
 });
 
+import VueDatepickerLocal from "vue-datepicker-local";
+
 export default {
+  components: {
+    VueDatepickerLocal
+  },
   name: "user",
   data() {
     return {
@@ -183,6 +205,26 @@ export default {
     this.fetchData();
   },
   methods: {
+    addUser() {
+      console.log(this.user);
+    },
+    isExpire(time, index) {
+      var now = new Date().valueOf() / 1000;
+      this.user.group[index].forever = false;
+      if (time == -1) {
+        //无限期的
+        this.user.group[index].forever = true;
+        return new Date();
+      } else if (now > time) {
+        //过期的
+        return new Date();
+      }
+      //有期限的
+      return new Date(time * 1000);
+    },
+    expireChange(event, index) {
+      this.user.group[index].forever = $(event.target).is(":checked");
+    },
     fetchData() {
       var vue = this;
       fetch(config.url + config.aapi + "user?page=" + this.pageIndex, {
@@ -200,8 +242,19 @@ export default {
       this.pageIndex = pageIndex;
       this.fetchData();
     },
-    editUser(uid) {
+    editUser(uid, row) {
       var vue = this;
+      if (row == undefined) {
+        vue.user.uid = -1;
+        vue.user.name = "";
+        vue.user.email = "";
+      } else {
+        vue.user.uid = row["uid"];
+        vue.user.name = row["user"];
+        vue.user.email = row["email"];
+      }
+      vue.user.pwd = "";
+      vue.user.group = [];
       if (uid != -1) {
         //编辑用户,获取用户群组
         get(config.url + config.aapi + "usergroup?uid=" + uid)
@@ -213,12 +266,21 @@ export default {
           });
       }
     },
-    userAction: function() {
-      console.log(this.$parent.group);
+    groupChange(event, index) {
+      if ($(event.target).val() == -1) {
+        this.user.group.splice(index, 1);
+      }
+    },
+    addUserGroup: function() {
+      this.user.group.push({
+        expire: 0,
+        group_id: 0,
+        uid: this.user.uid
+      });
     },
     customCompFunc(params) {
       if (params.type == "editUser") {
-        this.editUser(params.uid);
+        this.editUser(params.uid, params.row);
       }
     }
   }

@@ -210,6 +210,9 @@ body {
     #pop-wind {
         width: 300px;
     }
+    .datepicker {
+        width: 120px;
+    }
 }
 
 .pop-wid {
@@ -325,7 +328,6 @@ body {
 }
 
 .box-content {
-    overflow: hidden;
     padding: 8px !important;
     background: #fff;
 }
@@ -347,10 +349,19 @@ body {
 }
 
 .ipt-select.ipt-text {
-    width: 25%;
+    width: 30%;
 }
 
 .ipt-text:hover,
 .ipt-text:focus {
     border: 1px solid #00a5e0;
+}
+
+div.group {
+    margin-top: 4px;
+    line-height: 34px;
+}
+
+div.group .ipt-select.ipt-text {
+    height: 34px;
 }

@@ -25,7 +25,9 @@
   },
   "dependencies": {
     "vue": "^2.5.16",
+    "vue-datepicker-local": "^1.0.14",
     "vue-easytable": "^1.7.1",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vue2-slot-calendar": "^2.1.4"
   }
 }

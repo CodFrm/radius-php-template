@@ -79,4 +79,3 @@ window.close_box = function(id) {
         document.getElementById(id).style.height = "0px";
     }, 500);
 };
-
