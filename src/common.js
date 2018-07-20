@@ -14,3 +14,16 @@ export function get(url) {
         credentials: "include"
     });
 }
+
+export function req_json(url, method, data) {
+    var opts = {
+        method: method,
+        body: data,
+        credentials: "include",
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+    };
+    return fetch(url, opts);
+}

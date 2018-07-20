@@ -29,7 +29,6 @@
         <button class="btn pop-close" onclick="close_box('pop-wind')">X</button>
     </div>
     <div class="box-content">
-        <input type="hidden" id="wid" v-model="user.uid">
         <div class="box spk-box">
             <span>用户基本信息:</span><br>
             <span>用户名:<input class="ipt-text" id="user" name="name" v-model="user.name" placeholder="请输入用户名" /></span><br>
@@ -40,7 +39,10 @@
             <span>用户组:</span><br>
             <template  v-for="(group,index) in user.group" >
               <div class="group" :key="index">
-              <select class="ipt-text ipt-select group" @change="groupChange($event,index)">
+              <select class="ipt-text ipt-select group" @change="groupChange(index)" v-show="group.before=group.group_id || true" v-model="group.group_id">
+                <option value="0">
+                  未选择
+                </option>
                 <template v-for="(userGroup,s_index) in $parent.group" v-if="userGroup.group_id == group.group_id">
                 <option :value="userGroup.group_id" selected :key="s_index">
                   {{ userGroup.name }}
@@ -56,20 +58,19 @@
                 </option>
               </select>
               <template v-if="group.expire==-1">
-                <vue-datepicker-local v-show="time=new Date()" v-model="time">
-           
+                <vue-datepicker-local format="YYYY-MM-DD HH:mm:ss" @confirm="groupChange(index)" showButtons v-if="group.expire_=new Date()" v-model="group.expire_">
+
                 </vue-datepicker-local>
-                <input :id="'forever'+index" type="checkbox" @change="expireChange($event,index)" checked />
-                <label :for="'forever'+index">永久</label>
+                <input :id="'forever'+index" type="checkbox" @change="expireChange($event,index)" checked v-show="group.forever=true" />
               </template>
               <template v-else>
-                <vue-datepicker-local v-show="time=isExpire(group.expire,index)" v-model="time">
+                <vue-datepicker-local format="YYYY-MM-DD HH:mm:ss" @confirm="groupChange(index)" showButtons v-show="group.expire_=isExpire(group.expire,index)" v-model="group.expire_">
            
                 </vue-datepicker-local>
-                <input :id="'forever'+index" type="checkbox" @change="expireChange($event,index)" />
-                <label :for="'forever'+index">永久</label>
+                <input :id="'forever'+index" type="checkbox" @change="expireChange($event,index)" v-show="!(group.forever=false)" />
               </template>
-              
+              <label :for="'forever'+index">永久</label>
+
               </div>
             </template>
             <button class="btn btn-min" @click="addUserGroup" style="padding: 4px 8px;background:#00a5e0;color:#fff;margin-top:4px;" >+</button>
@@ -90,11 +91,14 @@
   width: 100%;
   text-align: right;
 }
+.datepicker__buttons .datepicker__button-cancel {
+  display: none;
+}
 </style>
 <script>
 import Vue from "vue";
 import config from "./../config";
-import { formatDate, get } from "./../common";
+import { formatDate, get, req_json } from "./../common";
 Vue.component("action-btn-group", {
   template:
     '<div><button class="btn" onclick="show_box(\'pop-wind\')" @click="edit" style="background:#00a5e0;color:#fff;">编辑</button> ' +
@@ -206,7 +210,15 @@ export default {
   },
   methods: {
     addUser() {
-      console.log(this.user);
+      var method = "put";
+      if (this.user.uid == -1) {
+        method = "post";
+      }
+      req_json(
+        config.url + config.aapi + "user",
+        method,
+        JSON.stringify(this.user)
+      );
     },
     isExpire(time, index) {
       var now = new Date().valueOf() / 1000;
@@ -224,6 +236,7 @@ export default {
     },
     expireChange(event, index) {
       this.user.group[index].forever = $(event.target).is(":checked");
+      this.groupChange(index);
     },
     fetchData() {
       var vue = this;
@@ -266,16 +279,51 @@ export default {
           });
       }
     },
-    groupChange(event, index) {
-      if ($(event.target).val() == -1) {
-        this.user.group.splice(index, 1);
+    groupChange(index) {
+      var vue =this;
+      if (this.user.uid == -1) {
+        return;
       }
+      var gid = this.user.group[index].group_id;
+      var expire = this.user.group[index].forever
+        ? -1
+        : Date.parse(this.user.group[index].expire_) / 1000;
+      var method = "post";
+      var before = this.user.group[index].before;
+      if (gid == -1) {
+        gid = this.user.group[index].before;
+        method = "delete";
+        this.user.group.splice(index, 1);
+      } else {
+        this.user.group[index].before = gid;
+      }
+      req_json(
+        config.url + config.aapi + "usergroup",
+        method,
+        JSON.stringify({
+          uid: this.user.uid,
+          gid: gid,
+          expire: expire,
+          before: before
+        })
+      )
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(json) {
+          if (method != "delete" && json.code == -1) {
+            vue.user.group[index].group_id = before;
+            vue.user.group[index].before = before;
+            alert(json.msg);
+          }
+        });
     },
     addUserGroup: function() {
       this.user.group.push({
         expire: 0,
         group_id: 0,
-        uid: this.user.uid
+        uid: this.user.uid,
+        before: 0
       });
     },
     customCompFunc(params) {
