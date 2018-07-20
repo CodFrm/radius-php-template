@@ -58,7 +58,7 @@
                 </option>
               </select>
               <template v-if="group.expire==-1">
-                <vue-datepicker-local format="YYYY-MM-DD HH:mm:ss" @confirm="groupChange(index)" showButtons v-if="group.expire_=new Date()" v-model="group.expire_">
+                <vue-datepicker-local format="YYYY-MM-DD HH:mm:ss" @confirm="groupChange(index)" showButtons v-if="group.expire_=new Date((new Date().getTime())+2592000*1000)" v-model="group.expire_">
 
                 </vue-datepicker-local>
                 <input :id="'forever'+index" type="checkbox" @change="expireChange($event,index)" checked v-show="group.forever=true" />
@@ -211,14 +211,28 @@ export default {
   methods: {
     addUser() {
       var method = "put";
+      var user = {
+        user: this.user.name,
+        passwd: this.user.pwd,
+        email: this.user.email
+      };
       if (this.user.uid == -1) {
         method = "post";
+        user.group = [];
+        for (var i = 0; i < this.user.group.length; i++) {
+          var expire = 0;
+          if (this.user.group[i].forever) {
+            expire = -1;
+          } else {
+            expire = Date.parse(this.user.group[i].expire_) / 1000;
+          }
+          user.group.push({
+            group_id: this.user.group[i].group_id,
+            expire: expire
+          });
+        }
       }
-      req_json(
-        config.url + config.aapi + "user",
-        method,
-        JSON.stringify(this.user)
-      );
+      req_json(config.url + config.aapi + "user", method, JSON.stringify(user));
     },
     isExpire(time, index) {
       var now = new Date().valueOf() / 1000;
@@ -226,10 +240,10 @@ export default {
       if (time == -1) {
         //无限期的
         this.user.group[index].forever = true;
-        return new Date();
+        return new Date((new Date().getTime())+2592000*1000);
       } else if (now > time) {
         //过期的
-        return new Date();
+        return new Date((new Date().getTime())+2592000*1000);
       }
       //有期限的
       return new Date(time * 1000);
@@ -280,23 +294,34 @@ export default {
       }
     },
     groupChange(index) {
-      var vue =this;
-      if (this.user.uid == -1) {
-        return;
-      }
+      var vue = this;
       var gid = this.user.group[index].group_id;
       var expire = this.user.group[index].forever
         ? -1
         : Date.parse(this.user.group[index].expire_) / 1000;
       var method = "post";
       var before = this.user.group[index].before;
+      for (var i = 0; i < this.user.group.length; i++) {
+        if (gid == this.user.group[i].group_id && i != index) {
+          //重复了
+          if (before === true) {
+            before = 0;
+          }
+          this.user.group[index].group_id = before;
+          alert("已经存在这个用户组了");
+          return;
+        }
+      }
       if (gid == -1) {
         gid = this.user.group[index].before;
         method = "delete";
         this.user.group.splice(index, 1);
+      } else if (this.user.uid == -1) {
+        return;
       } else {
         this.user.group[index].before = gid;
       }
+
       req_json(
         config.url + config.aapi + "usergroup",
         method,
