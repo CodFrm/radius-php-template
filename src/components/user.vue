@@ -76,7 +76,7 @@
             <button class="btn btn-min" @click="addUserGroup" style="padding: 4px 8px;background:#00a5e0;color:#fff;margin-top:4px;" >+</button>
         </div>
         <div class="box spk-box" style="text-align: right;">
-            <button class="btn" @click="addUser" style="background: #00a5e0;color: #fff;width:60px;">添加</button>
+            <button class="btn" @click="addUser" style="background: #00a5e0;color: #fff;width:60px;">{{ action }}</button>
         </div>
     </div>
     <div class="box-footer">
@@ -102,7 +102,7 @@ import { formatDate, get, req_json } from "./../common";
 Vue.component("action-btn-group", {
   template:
     '<div><button class="btn" onclick="show_box(\'pop-wind\')" @click="edit" style="background:#00a5e0;color:#fff;">编辑</button> ' +
-    '<button class="btn" style="background:red;color:#fff;">删除</button></div>',
+    '<button class="btn" @click="del" style="background:red;color:#fff;">{{ ban }}</button></div>',
   props: {
     rowData: {
       type: Object
@@ -114,12 +114,30 @@ Vue.component("action-btn-group", {
       type: Number
     }
   },
+  data() {
+    return { ban: "解禁" };
+  },
+  created() {
+    console.log(this.rowData["status"]);
+    if (this.rowData["status"] == 0) {
+      this.ban = "禁封";
+    }
+  },
   methods: {
     edit() {
       let params = {
         type: "editUser",
         uid: this.rowData["uid"],
         row: this.rowData
+      };
+      this.$emit("on-custom-comp", params);
+    },
+    del() {
+      let params = {
+        type: "delUser",
+        uid: this.rowData["uid"],
+        row: this.rowData,
+        index: this.index
       };
       this.$emit("on-custom-comp", params);
     }
@@ -194,6 +212,21 @@ export default {
           }
         },
         {
+          field: "status",
+          title: "用户状态",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          formatter: function(rowData) {
+            if (rowData["status"] == 0) {
+              return "正常用户";
+            } else {
+              return "<span style='color:red'>用户禁封</span>";
+            }
+          }
+        },
+        {
           field: "action",
           title: "操作",
           width: 120,
@@ -210,6 +243,7 @@ export default {
   },
   methods: {
     addUser() {
+      var vue=this;
       var method = "put";
       var user = {
         user: this.user.name,
@@ -231,8 +265,20 @@ export default {
             expire: expire
           });
         }
+      } else {
+        user.uid = this.user.uid;
       }
-      req_json(config.url + config.aapi + "user", method, JSON.stringify(user));
+      req_json(config.url + config.aapi + "user", method, JSON.stringify(user))
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(json) {
+          alert(json.msg);
+          if (json.code == 0) {
+            vue.pageChange(vue.pageIndex);
+            close_box("pop-wind");
+          }
+        });
     },
     isExpire(time, index) {
       var now = new Date().valueOf() / 1000;
@@ -240,10 +286,10 @@ export default {
       if (time == -1) {
         //无限期的
         this.user.group[index].forever = true;
-        return new Date((new Date().getTime())+2592000*1000);
+        return new Date(new Date().getTime() + 2592000 * 1000);
       } else if (now > time) {
         //过期的
-        return new Date((new Date().getTime())+2592000*1000);
+        return new Date(new Date().getTime() + 2592000 * 1000);
       }
       //有期限的
       return new Date(time * 1000);
@@ -275,10 +321,12 @@ export default {
         vue.user.uid = -1;
         vue.user.name = "";
         vue.user.email = "";
+        this.action = "添加";
       } else {
         vue.user.uid = row["uid"];
         vue.user.name = row["user"];
         vue.user.email = row["email"];
+        this.action = "修改";
       }
       vue.user.pwd = "";
       vue.user.group = [];
@@ -351,9 +399,35 @@ export default {
         before: 0
       });
     },
+    delUser(uid, row, index) {
+      var vue = this;
+      console.log(row);
+      var status = row["status"] == 0 ? 1 : 0;
+      req_json(
+        config.url + config.aapi + "user",
+        "delete",
+        JSON.stringify({
+          uid: uid,
+          status: status
+        })
+      )
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(json) {
+          if (json.code == 0) {
+            vue.tableData[index].status = status;
+          } else {
+            alert(json.msg);
+          }
+        });
+    },
     customCompFunc(params) {
       if (params.type == "editUser") {
         this.editUser(params.uid, params.row);
+      }
+      if (params.type == "delUser") {
+        this.delUser(params.uid, params.row, params.index);
       }
     }
   }
