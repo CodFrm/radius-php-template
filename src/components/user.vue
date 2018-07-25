@@ -7,7 +7,9 @@
                 </div>
                 <div class="card-text">
                     <div class="tools-bar">
-                      <button class="btn" style="background: #78c336;color: #fff;" onclick="show_box('pop-wind')" @click="editUser(-1)">添加用户</button>
+                      <button class="btn" style="background: #78c336;color: #fff;float:left;" onclick="show_box('pop-wind')" @click="editUser(-1)">添加用户</button>
+                      <input type="text" class="ipt-text" placeholder="搜索用户" v-model="keyword">
+                      <button class="btn" style="background: #00a5d8;color: #fff;" @click="fetchData">搜索</button>
                     </div>
                     <div id="user-table">
                         <v-table is-horizontal-resize style="width:100%" 
@@ -118,7 +120,6 @@ Vue.component("action-btn-group", {
     return { ban: "解禁" };
   },
   created() {
-    console.log(this.rowData["status"]);
     if (this.rowData["status"] == 0) {
       this.ban = "禁封";
     }
@@ -140,6 +141,11 @@ Vue.component("action-btn-group", {
         index: this.index
       };
       this.$emit("on-custom-comp", params);
+      if (this.rowData["status"] == 0) {
+        this.ban = "解禁";
+      } else {
+        this.ban = "禁封";
+      }
     }
   }
 });
@@ -153,6 +159,7 @@ export default {
   name: "user",
   data() {
     return {
+      keyword: "",
       user: {
         uid: 0,
         name: "",
@@ -162,7 +169,7 @@ export default {
       },
       action: "添加用户",
       pageIndex: 1,
-      total: 1234,
+      total: 0,
       tableData: [],
       columns: [
         {
@@ -243,7 +250,7 @@ export default {
   },
   methods: {
     addUser() {
-      var vue=this;
+      var vue = this;
       var method = "put";
       var user = {
         user: this.user.name,
@@ -300,9 +307,17 @@ export default {
     },
     fetchData() {
       var vue = this;
-      fetch(config.url + config.aapi + "user?page=" + this.pageIndex, {
-        credentials: "include"
-      })
+      fetch(
+        config.url +
+          config.aapi +
+          "user?page=" +
+          this.pageIndex +
+          "&keyword=" +
+          this.keyword,
+        {
+          credentials: "include"
+        }
+      )
         .then(function(response) {
           return response.json();
         })

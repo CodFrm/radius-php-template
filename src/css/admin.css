@@ -251,7 +251,8 @@ body {
     transform: translate(-50%, -50%);
     border-radius: 2px;
     box-shadow: 0px 0px 4px #484848;
-    z-index: 100;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .pop-box>div {
@@ -364,4 +365,9 @@ div.group {
 
 div.group .ipt-select.ipt-text {
     height: 34px;
+}
+
+.tools-bar .ipt-text{
+    width: 120px;
+    line-height: 18px;
 }

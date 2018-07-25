@@ -32,7 +32,6 @@ var vue = new Vue({
 $(function() {
     $('.nav-left>.nav-item>.nav-ic').click(function() {
         //改变箭头指向
-        console.log($(this).parent().children('.sub-nav').css('display'));
         if ($(this).parent().children('.sub-nav').css('display') == 'block') {
             $(this).children('.arrow').removeClass('icon-down');
             $(this).children('.arrow').addClass('icon-up');
@@ -71,11 +70,15 @@ window.popWind = function popWind() {
 window.show_box = function(id) {
     document.getElementById(id).style.opacity = "1";
     document.getElementById(id).style.height = "auto";
+    document.getElementById(id).style.zIndex = "100";
+    document.getElementById(id).style.pointerEvents = "all";
 };
 
 window.close_box = function(id) {
     document.getElementById(id).style.opacity = "0";
     setTimeout(function() {
         document.getElementById(id).style.height = "0px";
+        document.getElementById(id).style.zIndex = "-1";
+        document.getElementById(id).style.pointerEvents = "none";
     }, 500);
 };
