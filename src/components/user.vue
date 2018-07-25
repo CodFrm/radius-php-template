@@ -101,7 +101,7 @@
 import Vue from "vue";
 import config from "./../config";
 import { formatDate, get, req_json } from "./../common";
-Vue.component("action-btn-group", {
+Vue.component("user-action-btn-group", {
   template:
     '<div><button class="btn" onclick="show_box(\'pop-wind\')" @click="edit" style="background:#00a5e0;color:#fff;">编辑</button> ' +
     '<button class="btn" @click="del" style="background:red;color:#fff;">{{ ban }}</button></div>',
@@ -240,7 +240,7 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          componentName: "action-btn-group"
+          componentName: "user-action-btn-group"
         }
       ]
     };
@@ -416,7 +416,6 @@ export default {
     },
     delUser(uid, row, index) {
       var vue = this;
-      console.log(row);
       var status = row["status"] == 0 ? 1 : 0;
       req_json(
         config.url + config.aapi + "user",

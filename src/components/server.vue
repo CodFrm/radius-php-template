@@ -59,10 +59,11 @@
 import Vue from "vue";
 import config from "./../config";
 import { formatDate, get, req_json } from "./../common";
-Vue.component("action-btn-group", {
+Vue.component("server-action-btn-group", {
   template:
     '<div><button class="btn" onclick="show_box(\'pop-wind\')" @click="edit" style="background:#00a5e0;color:#fff;">编辑</button> ' +
-    '<button class="btn" @click="del" style="background:red;color:#fff;">{{ ban }}</button></div>',
+    '<button class="btn" @click="ban" style="background:#2ba535;color:#fff;">{{ button_ban }}</button> ' +
+    '<button class="btn" @click="del" style="background:red;color:#fff;">删除</button></div>',
   props: {
     rowData: {
       type: Object
@@ -75,11 +76,11 @@ Vue.component("action-btn-group", {
     }
   },
   data() {
-    return { ban: "开启" };
+    return { button_ban: "开启" };
   },
   created() {
     if (this.rowData["status"] == 0) {
-      this.ban = "关闭";
+      this.button_ban = "关闭";
     }
   },
   methods: {
@@ -91,19 +92,28 @@ Vue.component("action-btn-group", {
       };
       this.$emit("on-custom-comp", params);
     },
-    del() {
+    ban() {
       let params = {
-        type: "delServer",
-        uid: this.rowData["uid"],
+        type: "banServer",
+        server_id: this.rowData["server_id"],
         row: this.rowData,
         index: this.index
       };
       this.$emit("on-custom-comp", params);
       if (this.rowData["status"] == 0) {
-        this.ban = "开启";
+        this.button_ban = "开启";
       } else {
-        this.ban = "关闭";
+        this.button_ban = "关闭";
       }
+    },
+    del() {
+      let params = {
+        type: "delServer",
+        server_id: this.rowData["server_id"],
+        row: this.rowData,
+        index: this.index
+      };
+      this.$emit("on-custom-comp", params);
     }
   }
 });
@@ -183,7 +193,7 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          componentName: "action-btn-group"
+          componentName: "server-action-btn-group"
         }
       ]
     };
@@ -249,11 +259,54 @@ export default {
           vue.total = json["total"];
         });
     },
+    banServer(server_id, row, index) {
+      var vue = this;
+      var status = row["status"] == 0 ? 1 : 0;
+      req_json(
+        config.url + config.aapi + "server?type=1",
+        "delete",
+        JSON.stringify({
+          server_id: server_id,
+          status: status
+        })
+      )
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(json) {
+          if (json.code == 0) {
+            vue.tableData[index].status = status;
+          } else {
+            alert(json.msg);
+          }
+        });
+    },
+    delServer(server_id) {
+      var vue = this;
+      req_json(
+        config.url + config.aapi + "server?type=2",
+        "delete",
+        JSON.stringify({
+          server_id: server_id
+        })
+      )
+        .then(function(res) {
+          return res.json();
+        })
+        .then(function(json) {
+          if (json.code == 0) {
+            vue.pageChange(vue.pageIndex);
+          } else {
+            alert(json.msg);
+          }
+        });
+    },
     customCompFunc(params) {
       if (params.type == "editServer") {
         this.showMsg(params.server_id, params.row);
-      }
-      if (params.type == "delServer") {
+      } else if (params.type == "banServer") {
+        this.banServer(params.server_id, params.row, params.index);
+      } else if (params.type == "delServer") {
         this.delServer(params.server_id, params.row, params.index);
       }
     }
