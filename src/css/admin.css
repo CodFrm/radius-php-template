@@ -213,6 +213,11 @@ body {
     .datepicker {
         width: 120px;
     }
+    .form>.ipt-group>.tag,
+    .form>.ipt-group>.ipt-text {
+        width: auto;
+        max-width: 100%;
+    }
 }
 
 .pop-wid {
@@ -337,6 +342,27 @@ body {
     width: 400px;
 }
 
+.form .ipt-group {
+    margin: 0 auto;
+    margin-bottom: 6px;
+    width: 60%;
+}
+
+.form .tag {
+    max-width: 25%;
+    display: inline-block;
+    width: 100px;
+    font-size: 16px;
+    margin-right: 6px;
+}
+
+.form .ipt-text {
+    width: 70%;
+    display: inline-block;
+    font-size: 14px;
+    height: 30px;
+}
+
 .box-content>p {
     font-size: 14px;
 }
@@ -367,7 +393,7 @@ div.group .ipt-select.ipt-text {
     height: 34px;
 }
 
-.tools-bar .ipt-text{
+.tools-bar .ipt-text {
     width: 120px;
     line-height: 18px;
 }

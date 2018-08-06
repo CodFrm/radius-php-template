@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import home from './../components/home.vue'
 import user from './../components/user.vue'
 import server from './../components/server.vue'
-
+import setting from './../components/setting.vue'
 Vue.use(Router);
 
 export default new Router({
@@ -20,6 +20,10 @@ export default new Router({
             path: '/server',
             name: 'server',
             component: server
+        }, {
+            path: '/setting',
+            name: 'setting',
+            component: setting
         },
         { path: '*', redirect: '/' }
     ]
