@@ -353,11 +353,11 @@ body {
     display: inline-block;
     width: 100px;
     font-size: 16px;
-    margin-right: 6px;
+    padding-right: 6px;
 }
 
 .form .ipt-text {
-    width: 70%;
+    width: 85%;
     display: inline-block;
     font-size: 14px;
     height: 30px;
