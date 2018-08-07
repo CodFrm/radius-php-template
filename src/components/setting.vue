@@ -14,7 +14,7 @@
                            <label class="tag">注册间隔:</label><input class="ipt-text" type="number" placeholder="注册间隔长度(秒)" name="reg_interval" v-model.number="config.reg_interval">
                         </div>
                         <div class="ipt-group" style="text-align: right;margin-top:20px;">
-                            <button class="btn" style="background:#f23b3b;color:#fff;height:30px;width:80px;font-size:14px;">修改</button>
+                            <button class="btn" style="background:#f23b3b;color:#fff;height:30px;width:80px;font-size:14px;" @click="submit">修改</button>
                         </div>
                     </div>
                 </div>
@@ -51,6 +51,15 @@ export default {
         .then(function(json) {
           vue.config = json["config"];
         });
+    },
+    submit() {
+      req_json(
+        config.url + config.aapi + "setting",
+        "put",
+        JSON.stringify(this.config)
+      ).then(function(response) {
+        alert("修改成功");
+      });
     }
   }
 };
