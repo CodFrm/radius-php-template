@@ -1,10 +1,10 @@
 <template>
     <div class="content">
         <div class="nav-bar">
-           <router-link to="/" active-class="active" class="nav-item" exact>
+           <router-link to="/" class="nav-item" exact>
                <i class="iconfont icon-home"></i> 首页
             </router-link>/
-            <router-link to="/setting" active-class="active" class="nav-item" exact>
+            <router-link to="/setting" class="nav-item" exact>
                系统设置
             </router-link>
         </div>

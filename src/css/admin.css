@@ -131,6 +131,10 @@ body {
     box-sizing: border-box;
 }
 
+.card:not(:first-child) {
+    margin-top: 10px;
+}
+
 .card-content {
     background: #fff;
     width: 100%;
@@ -138,7 +142,8 @@ body {
 }
 
 .card .card-header {
-    line-height: 22px;
+    overflow: hidden;
+    line-height: 27px;
     padding: 8px 6px;
     font-size: 16px;
     height: auto;
@@ -205,7 +210,7 @@ a.nav-item {
         position: absolute;
         right: 10px;
     }
-    .nav-bar{
+    .nav-bar {
         display: none;
     }
     .top-user .nav-user {
@@ -239,6 +244,13 @@ a.nav-item {
     .box-content.form>.ipt-group {
         width: 90%;
     }
+    .min-card {
+        width: 100%;
+        margin-bottom: 4px;
+    }
+    .min-card .card-content {
+        width: calc(100% - 60px) !important;
+    }
 }
 
 .pop-wid {
@@ -265,6 +277,7 @@ a.nav-item {
 }
 
 .tools-bar {
+    margin-top: 8px;
     text-align: right;
 }
 
@@ -379,6 +392,64 @@ a.nav-item {
 
 .form>.ipt-group>.tag {
     margin-bottom: 6px;
+}
+
+.min-card {
+    display: inline-block;
+    height: 100px;
+    box-sizing: unset;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.min-card:hover {
+    box-shadow: 0px 0px 2px 0px #0094ffc9;
+}
+
+.min-card .card-content,
+.min-card .card-title {
+    padding: 6px;
+    height: 100px;
+    display: inline-block;
+    text-align: center;
+}
+
+.card .card-select {
+    width: 180px;
+    float: right;
+    line-height: 20px
+}
+
+.min-card .card-title {
+    width: 60px;
+    float: left;
+    background: #40a7f1;
+    font-size: 16px;
+    line-height: 92px;
+    color: #fff;
+}
+
+.min-card .card-action {
+    line-height: 30px;
+}
+
+.card-action a {
+    text-decoration: none;
+    color: #40a7f1;
+}
+
+.bigp {
+    font-size: 30px;
+    color: #666;
+    margin: 0;
+}
+
+.min-card .card-content {
+    border: 1px solid #eee;
+    border-left: 0;
+    width: auto;
+    line-height: 60px;
+    min-width: 200px;
 }
 
 .form .ipt-text {

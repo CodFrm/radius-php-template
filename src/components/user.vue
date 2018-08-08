@@ -1,10 +1,10 @@
 <template>
     <div class="content">
         <div class="nav-bar">
-           <router-link to="/" active-class="active" class="nav-item" exact>
+           <router-link to="/" class="nav-item" exact>
                <i class="iconfont icon-home"></i> 首页
             </router-link>/
-            <router-link to="/user" active-class="active" class="nav-item" exact>
+            <router-link to="/user" class="nav-item" exact>
                用户管理
             </router-link>
         </div>
