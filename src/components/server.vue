@@ -1,5 +1,13 @@
 <template>
     <div class="content">
+        <div class="nav-bar">
+           <router-link to="/" active-class="active" class="nav-item" exact>
+               <i class="iconfont icon-home"></i> 首页
+            </router-link>/
+            <router-link to="/server" active-class="active" class="nav-item" exact>
+               服务器管理
+            </router-link>
+        </div>
         <div class="card" style="width: 100%;min-height: 200px;">
             <div class="card-content" style="width: 100%;height: 100%;min-height: 200px;">
                 <div class="card-header">

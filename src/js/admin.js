@@ -44,6 +44,20 @@ $(function() {
     $('.mobile-menu').click(function() {
         $('.nav-left').slideToggle().end();
     });
+    $(document).on('click', function(e) {
+        if (!($(document).width() < 720 && $('.nav-left').css('display') == 'block')) {
+            return;
+        }
+        var e = e || window.event;
+        var elem = e.target || e.srcElement;
+        while (elem) {
+            if (elem.className && elem.className.indexOf('mobile-menu') >= 0) {
+                return;
+            }
+            elem = elem.parentNode;
+        }
+        $('.nav-left').slideToggle().end();
+    });
 })
 
 window.popWind = function popWind() {
