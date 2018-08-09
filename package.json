@@ -24,6 +24,8 @@
     "webpack-merge": "^4.1.3"
   },
   "dependencies": {
+    "less": "^3.8.1",
+    "less-loader": "^4.1.0",
     "vue": "^2.5.16",
     "vue-datepicker-local": "^1.0.14",
     "vue-easytable": "^1.7.1",

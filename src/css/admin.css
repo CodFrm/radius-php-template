@@ -493,3 +493,12 @@ div.group .ipt-select.ipt-text {
     width: 120px;
     line-height: 18px;
 }
+
+.card-text .inline {
+    width: auto;
+    display: inline-block;
+}
+
+.card-text .inline:not(:first-child) {
+    margin-left: 16px;
+}

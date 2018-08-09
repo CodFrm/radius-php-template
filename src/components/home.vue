@@ -47,7 +47,8 @@
                     </select>
                 </div>
                 <div class="card-text" style="padding:10px;">
-                    试试
+                    <circle-progress class="inline" :percent='30'></circle-progress>
+                    <circle-progress class="inline" :percent='40'></circle-progress>
                 </div>
             </div>
         </div>
@@ -55,7 +56,12 @@
 </template>
 
 <script>
+import circleProgress from "./progress.vue";
+
 export default {
-  name: "app"
+  name: "app",
+  components: {
+    "circle-progress": circleProgress
+  }
 };
 </script>
