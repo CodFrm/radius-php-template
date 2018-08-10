@@ -47,8 +47,26 @@
                     </select>
                 </div>
                 <div class="card-text" style="padding:10px;">
-                    <circle-progress class="inline" :percent='30'></circle-progress>
-                    <circle-progress class="inline" :percent='40'></circle-progress>
+                    <div class="system-msg-box">
+                        <span class="msg">系统负载</span>
+                        <circle-progress class="inline" :percent='30'></circle-progress>
+                        <span class="msg">运行流畅</span>
+                    </div>
+                    <div class="system-msg-box">
+                        <span class="msg">CPU使用率</span>
+                        <circle-progress class="inline" :percent='40'></circle-progress>
+                        <span class="msg">2核</span>
+                    </div>
+                    <div class="system-msg-box">
+                        <span class="msg">内存使用</span>
+                        <circle-progress class="inline" :percent='40'></circle-progress>
+                        <span class="msg">10/1024(MB)</span>
+                    </div>
+                    <div class="system-msg-box">
+                        <span class="msg">磁盘空间</span>
+                        <circle-progress class="inline" :percent='40'></circle-progress>
+                        <span class="msg">100/2000(G)</span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -34,8 +34,10 @@ body {
     position: absolute;
     left: 200px;
     top: 50px;
+    bottom: 0;
     right: 0;
     padding: 10px;
+    overflow: auto;
 }
 
 .header>div {
@@ -192,16 +194,45 @@ a.nav-item {
     width: 500px;
 }
 
+.system-msg-box {
+    display: inline-block;
+    height: 140px;
+}
+
+.system-msg-box:not(:first-child) {
+    margin-left: 80px;
+}
+
+.system-msg-box .msg {
+    display: block;
+    text-align: center;
+}
+
+.system-msg-box .msg:first-child {
+    margin-bottom: 8px;
+}
+
+.system-msg-box .msg:last-child {
+    margin-top: 8px;
+}
+
 @media screen and (max-width: 720px) {
+    .system-msg-box:not(:first-child) {
+        margin-left: 0;
+    }
+    .system-msg-box:nth-child(odd) {
+        margin-left: 20px;
+    }
+    .system-msg-box:nth-child(even) {
+        float: right;
+        margin-right: 20px;
+    }
     .card.card-half {
         width: 100%;
     }
     .header {
         background: #545965;
         color: #fff;
-    }
-    .content {
-        padding: 0;
     }
     .logo>.logo-text {
         color: #fff;
@@ -229,6 +260,7 @@ a.nav-item {
     .content {
         left: 0;
         right: 0;
+        padding: 0;
     }
     #pop-wind {
         width: 300px;
@@ -497,8 +529,4 @@ div.group .ipt-select.ipt-text {
 .card-text .inline {
     width: auto;
     display: inline-block;
-}
-
-.card-text .inline:not(:first-child) {
-    margin-left: 16px;
 }
