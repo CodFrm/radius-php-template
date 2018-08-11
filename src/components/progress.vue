@@ -89,7 +89,7 @@ export default {
     }
   },
   created() {
-    setTimeout(() => {
+    setInterval(() => {
       this.percent_internal = this.percent;
     }, 200);
   },

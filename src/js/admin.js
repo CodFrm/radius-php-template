@@ -14,7 +14,8 @@ var vue = new Vue({
     router,
     data() {
         return {
-            group: []
+            group: [],
+            ws: null
         };
     },
     created() {

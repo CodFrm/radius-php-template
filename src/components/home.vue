@@ -49,23 +49,23 @@
                 <div class="card-text" style="padding:10px;">
                     <div class="system-msg-box">
                         <span class="msg">系统负载</span>
-                        <circle-progress class="inline" :percent='30'></circle-progress>
-                        <span class="msg">运行流畅</span>
+                        <circle-progress class="inline" :percent='parseFloat(sys_msg.load[0])'></circle-progress>
+                        <span class="msg">{{ runStatus() }}</span>
                     </div>
                     <div class="system-msg-box">
                         <span class="msg">CPU使用率</span>
-                        <circle-progress class="inline" :percent='40'></circle-progress>
-                        <span class="msg">2核</span>
+                        <circle-progress class="inline" :percent='sys_msg.cpu.use'></circle-progress>
+                        <span class="msg">{{ sys_msg.cpu.num }}核</span>
                     </div>
                     <div class="system-msg-box">
                         <span class="msg">内存使用</span>
-                        <circle-progress class="inline" :percent='40'></circle-progress>
-                        <span class="msg">10/1024(MB)</span>
+                        <circle-progress class="inline" :percent='Math.round(sys_msg.mem.use/sys_msg.mem.total*100)'></circle-progress>
+                        <span class="msg">{{ kb2big(sys_msg.mem.use) }}/{{ kb2big(sys_msg.mem.total) }}</span>
                     </div>
                     <div class="system-msg-box">
                         <span class="msg">磁盘空间</span>
-                        <circle-progress class="inline" :percent='40'></circle-progress>
-                        <span class="msg">100/2000(G)</span>
+                        <circle-progress class="inline" :percent='Math.round(sys_msg.disk.use/sys_msg.disk.total*100)'></circle-progress>
+                        <span class="msg">{{ kb2big(sys_msg.disk.use/1024) }}/{{ kb2big(sys_msg.disk.total/1024) }}</span>
                     </div>
                 </div>
             </div>
@@ -82,15 +82,56 @@ export default {
     "circle-progress": circleProgress
   },
   data() {
-    return { websocket: null };
+    return {
+      websocket: null,
+      sys_msg: {
+        load: 12,
+        cpu: {
+          use: 0
+        },
+        mem: {
+          total: 1,
+          use: 0
+        },
+        disk: {
+          total: 1,
+          use: 0
+        }
+      }
+    };
   },
   created() {
-    this.websocket = new WebSocket("ws://192.168.1.20:5135/?key=xiajibada");
+    if (this.$parent.ws == null) {
+      this.$parent.ws = new WebSocket("ws://192.168.1.20:5135/?key=xiajibada");
+    }
+    this.websocket = this.$parent.ws;
     var ws = this.websocket;
+    var vue = this;
     this.websocket.onmessage = function(evt) {
-      console.log(evt.data);
+      var json = JSON.parse(evt.data);
+      vue.sys_msg = json;
     };
-    
+  },
+  methods: {
+    runStatus() {
+      var load = this.sys_msg.load[0],
+        num = this.sys_msg.cpu.num;
+      if (load < num) {
+        return "运行流畅";
+      } else if (load < num * 2) {
+        return "<span style='color:#f5945a'>系统繁忙</span>";
+      }
+      return "-";
+    },
+    kb2big(kb) {
+      var ret = kb / 1024;
+      if (ret > 1024) {
+        ret = Math.round(ret / 1024 * 100) / 100 + "GB";
+      } else {
+        ret = Math.round(ret) + "MB";
+      }
+      return ret;
+    }
   }
 };
 </script>
