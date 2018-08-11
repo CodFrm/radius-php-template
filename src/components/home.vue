@@ -80,6 +80,17 @@ export default {
   name: "app",
   components: {
     "circle-progress": circleProgress
+  },
+  data() {
+    return { websocket: null };
+  },
+  created() {
+    this.websocket = new WebSocket("ws://192.168.1.20:5135/?key=xiajibada");
+    var ws = this.websocket;
+    this.websocket.onmessage = function(evt) {
+      console.log(evt.data);
+    };
+    
   }
 };
 </script>
