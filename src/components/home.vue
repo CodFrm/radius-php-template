@@ -40,10 +40,8 @@
             <div class="card-content">
                 <div class="card-header card-big">
                     服务器信息
-                    <select class="ipt-text card-select">
-                        <option value="">树莓派</option>
-                        <option value="">PC</option>
-                        <option value="">瞎写的</option>
+                    <select id="server-msg" class="ipt-text card-select" @change="server_change" v-model="now_server_ip">
+                        <option v-for="(serv,index) in server" :key="index" :value="serv.ip">{{ serv.name }}</option>
                     </select>
                 </div>
                 <div class="card-text" style="padding:10px;">
@@ -75,6 +73,8 @@
 
 <script>
 import circleProgress from "./progress.vue";
+import config from "./../config";
+import { formatDate, get, req_json } from "./../common";
 
 export default {
   name: "app",
@@ -84,8 +84,10 @@ export default {
   data() {
     return {
       websocket: null,
+      now_server_ip: "",
+      server: {},
       sys_msg: {
-        load: 12,
+        load: 0,
         cpu: {
           use: 0
         },
@@ -101,8 +103,11 @@ export default {
     };
   },
   created() {
+    this.now_server_ip = localStorage["record"];
     if (this.$parent.ws == null) {
-      this.$parent.ws = new WebSocket("ws://192.168.1.20:5135/?key=xiajibada");
+      this.$parent.ws = new WebSocket(
+        "ws://" + this.now_server_ip + ":5135/?key=xiajibada"
+      );
     }
     this.websocket = this.$parent.ws;
     var ws = this.websocket;
@@ -111,8 +116,50 @@ export default {
       var json = JSON.parse(evt.data);
       vue.sys_msg = json;
     };
+    get(config.url + config.aapi + "server?simple=0")
+      .then(function(res) {
+        return res.json();
+      })
+      .then(function(json) {
+        vue.server = json.rows;
+        if (vue.now_server_ip == undefined) {
+          vue.now_server_ip = vue.server[0].ip;
+          setTimeout(function(){
+              vue.server_change({ target: document.getElementById("server-msg") })
+          },200);
+        }
+      });
   },
   methods: {
+    server_change(event) {
+      this.$parent.ws.close();
+      console.log(event.target.value);
+      this.sys_msg = {
+        load: 0,
+        cpu: {
+          use: 0
+        },
+        mem: {
+          total: 1,
+          use: 0
+        },
+        disk: {
+          total: 1,
+          use: 0
+        }
+      };
+      this.websocket = new WebSocket(
+        "ws://" + event.target.value + ":5135/?key=xiajibada"
+      );
+      var vue = this;
+      this.websocket.onmessage = function(evt) {
+        var json = JSON.parse(evt.data);
+        vue.sys_msg = json;
+      };
+      this.$parent.ws = this.websocket;
+      this.now_server_ip = event.target.value;
+      localStorage["record"] = event.target.value;
+    },
     runStatus() {
       var load = this.sys_msg.load[0],
         num = this.sys_msg.cpu.num;
