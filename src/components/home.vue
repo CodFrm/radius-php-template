@@ -14,7 +14,7 @@
                     <div class="min-card">
                         <div class="card-title">用户</div>
                         <div class="card-content">
-                            <h4 class="bigp">24 人</h4>
+                            <h4 class="bigp">{{ server_msg.user }} 人</h4>
                             <div class="card-action">
                                 <router-link to="/user" class="nav-item" exact>
                                   管理
@@ -25,9 +25,9 @@
                     <div class="min-card">
                         <div class="card-title">服务器</div>
                         <div class="card-content">
-                            <h4 class="bigp">2 台</h4>
+                            <h4 class="bigp">{{ server_msg.server }} 台</h4>
                             <div class="card-action">
-                                <router-link to="/user" class="nav-item" exact>
+                                <router-link to="/server" class="nav-item" exact>
                                   管理
                                 </router-link>
                             </div>
@@ -99,6 +99,10 @@ export default {
           total: 1,
           use: 0
         }
+      },
+      server_msg: {
+        user: 0,
+        server: 0
       }
     };
   },
@@ -124,10 +128,19 @@ export default {
         vue.server = json.rows;
         if (vue.now_server_ip == undefined) {
           vue.now_server_ip = vue.server[0].ip;
-          setTimeout(function(){
-              vue.server_change({ target: document.getElementById("server-msg") })
-          },200);
+          setTimeout(function() {
+            vue.server_change({
+              target: document.getElementById("server-msg")
+            });
+          }, 200);
         }
+      });
+    get(config.url + config.aapi + "sysmsg")
+      .then(function(res) {
+        return res.json();
+      })
+      .then(function(json) {
+        vue.server_msg = json;
       });
   },
   methods: {
