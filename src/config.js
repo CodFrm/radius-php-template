@@ -1,4 +1,4 @@
 export default {
-    url:'http://127.0.0.1/php-radius/public',
+    url:'http://127.0.3.1',
     aapi:'/admin/api/'
 };
