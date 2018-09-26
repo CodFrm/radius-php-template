@@ -8,7 +8,33 @@ export function formatDate(timestamp) {
     var s = date.getSeconds();
     return Y + M + D + h + m + s;
 }
+export function formatTime(s) {
+    var ret = '', tmp = parseInt(s / 60), y = s % 60;
+    if (tmp < 1) {
+        ret = s + "秒";
+    } else {
+        ret = y + "秒";
+        y = tmp % 60;
+        tmp = parseInt(tmp / 60);
+        if (tmp < 1) {
+            ret = y + "分 " + ret;
+        } else {
+            ret = tmp + "时 " + y + "分 " + ret;
+        }
+    }
 
+    return ret;
+}
+export function formatByte(byte) {
+    var mb = parseInt(byte / (1048576)), tmp = mb / 1024;
+    var ret = '';
+    if (tmp < 1) {
+        ret = mb + "MB";
+    } else {
+        ret = parseInt(tmp) + "GB " + (mb % 1024) + "MB";
+    }
+    return ret;
+}
 export function get(url) {
     return fetch(url, {
         credentials: "include"
